@@ -10,10 +10,13 @@
 #include "core/utils/serverConfigUtils.h"
 #include "core/utils/constants/apiKeys.h"
 #include "core/utils/constants/configKeys.h"
+#include "managedPolicy.h"
 
 using namespace amnezia;
 
 namespace {
+
+const QString serversListKey = QStringLiteral("Servers/serversList");
 
 QString readStorageServerId(const QJsonObject &json)
 {
@@ -84,11 +87,20 @@ SecureServersRepository::SecureServersRepository(SecureQSettings *settings, QObj
 
 QVariant SecureServersRepository::value(const QString &key, const QVariant &defaultValue) const
 {
+    if (key == serversListKey && managed::isEnabled()) {
+        return managed::serversList();
+    }
     return m_settings->value(key, defaultValue);
 }
 
 void SecureServersRepository::setValue(const QString &key, const QVariant &value)
 {
+    if (key == serversListKey && managed::isEnabled()) {
+        if (!managed::setServersList(value.toByteArray())) {
+            qWarning() << "Managed mode: servers list can only be changed by an administrator";
+        }
+        return;
+    }
     m_settings->setValue(key, value);
 }
 

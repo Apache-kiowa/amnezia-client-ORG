@@ -12,6 +12,7 @@
 #include "daemon.h"
 #include "leakdetector.h"
 #include "logger.h"
+#include "managedPolicy.h"
 
 namespace {
 Logger logger("DaemonLocalServerConnection");
@@ -104,8 +105,15 @@ void DaemonLocalServerConnection::parseCommand(const QByteArray& data) {
   }
 
   if (type == "activate") {
+    QJsonObject resolvedConfig = obj;
+    if (!amnezia::managed::resolveWireGuardConfig(resolvedConfig)) {
+      logger.error() << "Rejected: server is not approved by the administrator";
+      emit disconnected();
+      return;
+    }
+
     InterfaceConfig config;
-    if (!Daemon::parseConfig(obj, config)) {
+    if (!Daemon::parseConfig(resolvedConfig, config)) {
       logger.error() << "Invalid configuration";
       emit disconnected();
       return;

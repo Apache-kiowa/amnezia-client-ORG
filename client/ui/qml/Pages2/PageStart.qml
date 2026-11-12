@@ -23,7 +23,10 @@ PageType {
         target: PageController
 
         function onGoToPageHome() {
-            if (PageController.isStartPageVisible()) {
+            if (IsManagedLocked) {
+                root.isTabBarShown = false
+                tabBarStackView.goToTabBarPage(PageEnum.PageHome)
+            } else if (PageController.isStartPageVisible()) {
                 root.isTabBarShown = false
                 tabBarStackView.goToTabBarPage(PageEnum.PageSetupWizardStart)
             } else {
@@ -34,16 +37,25 @@ PageType {
         }
 
         function onGoToPageSettings() {
+            if (IsManagedLocked) {
+                return
+            }
             tabBar.setCurrentIndex(2)
             tabBarStackView.goToTabBarPage(PageEnum.PageSettings)
         }
 
         function onGoToPageViewConfig() {
+            if (IsManagedLocked) {
+                return
+            }
             var pagePath = PageController.getPagePath(PageEnum.PageSetupWizardViewConfig)
             tabBarStackView.push(pagePath, { "objectName" : pagePath }, StackView.PushTransition)
         }
 
         function onGoToShareConnectionPage(headerText, configContentHeaderText, configCaption, configExtension, configFileName) {
+            if (IsManagedLocked) {
+                return
+            }
             var pagePath = PageController.getPagePath(PageEnum.PageShareConnection)
             tabBarStackView.push(pagePath,
                                  { "objectName" : pagePath,
@@ -73,6 +85,11 @@ PageType {
         }
 
         function onGoToPage(page, slide, pageProperties) {
+            if (IsManagedLocked) {
+                PageController.showNotificationMessage(qsTr("Only an administrator can change VPN settings"))
+                return
+            }
+
             var pagePath = PageController.getPagePath(page)
             var properties = Object.assign({ "objectName" : pagePath }, pageProperties)
 
@@ -276,7 +293,14 @@ PageType {
 
         Component.onCompleted: {
             var pagePath
-            if (PageController.isStartPageVisible()) {
+            if (IsManagedLocked) {
+                root.isTabBarShown = false
+                pagePath = PageController.getPagePath(PageEnum.PageHome)
+                ServersUiController.setProcessedServerId(ServersUiController.defaultServerId)
+                if (PageController.isStartPageVisible()) {
+                    PageController.showNotificationMessage(qsTr("VPN is not configured. Contact your administrator."))
+                }
+            } else if (PageController.isStartPageVisible()) {
                 root.isTabBarShown = false
                 pagePath = PageController.getPagePath(PageEnum.PageSetupWizardStart)
             } else {

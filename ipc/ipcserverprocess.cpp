@@ -1,5 +1,7 @@
 #include "ipcserverprocess.h"
 #include "ipc.h"
+#include "managedPolicy.h"
+#include <QDebug>
 #include <QProcess>
 
 #ifndef Q_OS_IOS
@@ -55,7 +57,19 @@ void IpcServerProcess::close()
 
 void IpcServerProcess::setArguments(const QStringList &arguments)
 {
-    m_process->setArguments(amnezia::sanitizeArguments(m_program, arguments));
+    const QStringList sanitized = amnezia::sanitizeArguments(m_program, arguments);
+
+    if (m_program == amnezia::PermittedProcess::Tun2Socks && amnezia::managed::isEnabled()) {
+        const int proxyIndex = sanitized.indexOf(QStringLiteral("-proxy"));
+        if (proxyIndex < 0 || proxyIndex + 1 >= sanitized.size()
+            || !amnezia::managed::isTun2SocksProxyApproved(sanitized.at(proxyIndex + 1))) {
+            qWarning() << "IpcServerProcess::setArguments rejected: tun2socks proxy is not approved";
+            m_process->setArguments({});
+            return;
+        }
+    }
+
+    m_process->setArguments(sanitized);
 }
 
 void IpcServerProcess::setInputChannelMode(QProcess::InputChannelMode mode)
@@ -65,6 +79,10 @@ void IpcServerProcess::setInputChannelMode(QProcess::InputChannelMode mode)
 
 void IpcServerProcess::setNativeArguments(const QString &arguments)
 {
+    if (amnezia::managed::isEnabled()) {
+        qWarning() << "IpcServerProcess::setNativeArguments rejected in managed mode";
+        return;
+    }
 #ifdef Q_OS_WIN
     m_process->setNativeArguments(arguments);
 #endif
@@ -80,6 +98,10 @@ void IpcServerProcess::setProgram(int programId)
     Q_ASSERT(programId > static_cast<int>(amnezia::PermittedProcess::Invalid) &&
              programId < static_cast<int>(amnezia::PermittedProcess::PermittedProcessCount));
     m_program = static_cast<amnezia::PermittedProcess>(programId);
+    if (amnezia::managed::isEnabled() && m_program != amnezia::PermittedProcess::Tun2Socks) {
+        qWarning() << "IpcServerProcess::setProgram rejected in managed mode:" << programId;
+        m_program = amnezia::PermittedProcess::Invalid;
+    }
     m_process->setProgram(amnezia::permittedProcessPath(m_program));
     m_process->setArguments({});
 }

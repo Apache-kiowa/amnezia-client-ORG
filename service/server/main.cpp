@@ -4,6 +4,7 @@
 #include "localserver.h"
 #include "logger.h"
 #include "systemservice.h"
+#include "managedPolicy.h"
 #include "core/utils/utilities.h"
 
 #ifdef Q_OS_WIN
@@ -36,6 +37,7 @@ int runApplication(int argc, char** argv)
     }
 #endif
 
+    amnezia::managed::refreshPublicServersList();
     LocalServer localServer;
     return app.exec();
 

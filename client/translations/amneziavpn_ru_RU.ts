@@ -6160,6 +6160,14 @@ Only one can be active at a time: VPN or local proxy</source>
 <context>
     <name>PageStart</name>
     <message>
+        <source>VPN is not configured. Contact your administrator.</source>
+        <translation>VPN не настроен. Обратитесь к администратору.</translation>
+    </message>
+    <message>
+        <source>Only an administrator can change VPN settings</source>
+        <translation>Изменять настройки VPN может только администратор</translation>
+    </message>
+    <message>
         <location filename="../ui/qml/Pages2/PageStart.qml" line="199"/>
         <source>Logging was disabled after 14 days, log files were deleted</source>
         <translation>Логирование было отключено по прошествии 14 дней, файлы логов были удалены.</translation>
@@ -6256,6 +6264,10 @@ Only one can be active at a time: VPN or local proxy</source>
 </context>
 <context>
     <name>QObject</name>
+    <message>
+        <source>Only an administrator can add or change connections. Run AmneziaVPN as administrator.</source>
+        <translation>Добавлять и изменять подключения может только администратор. Запустите AmneziaVPN от имени администратора.</translation>
+    </message>
     <message>
         <location filename="../core/utils/errorStrings.cpp" line="11"/>
         <source>No error</source>

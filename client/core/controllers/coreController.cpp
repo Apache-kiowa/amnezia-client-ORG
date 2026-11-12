@@ -1,4 +1,5 @@
 #include "coreController.h"
+#include "managedPolicy.h"
 
 #include <QCoreApplication>
 #include <QDirIterator>
@@ -318,7 +319,7 @@ void CoreController::initSignalHandlers()
 
 void CoreController::checkForAppUpdates()
 {
-    if (!m_appSettingsRepository->isAutoUpdateCheckEnabled()) {
+    if (!m_appSettingsRepository->isAutoUpdateCheckEnabled() || amnezia::managed::isEnabled()) {
         return;
     }
     m_updateController->checkForUpdates();

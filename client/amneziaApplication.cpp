@@ -26,6 +26,7 @@
 #include "ui/utils/mtProxyPublicHostInput.h"
 #include "version.h"
 #include "core/utils/appUiConfig.h"
+#include "managedPolicy.h"
 
 #include "platforms/ios/QRCodeReaderBase.h"
 #ifdef Q_OS_IOS
@@ -146,6 +147,7 @@ void AmneziaApplication::init()
         Qt::QueuedConnection);
 
     m_engine->rootContext()->setContextProperty("Debug", &Logger::Instance());
+    m_engine->rootContext()->setContextProperty("IsManagedLocked", amnezia::managed::isLocked());
 
 #ifdef MACOS_NE
     m_engine->rootContext()->setContextProperty("IsMacOsNeBuild", true);

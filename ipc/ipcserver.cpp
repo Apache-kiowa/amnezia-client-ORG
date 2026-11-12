@@ -1,4 +1,5 @@
 #include "ipcserver.h"
+#include "managedPolicy.h"
 
 #include <QDateTime>
 #include <QDebug>
@@ -311,7 +312,13 @@ bool IpcServer::xrayStart(const QString& cfg)
     qDebug() << "IpcServer::xrayStart";
 #endif
 
-    return Xray::getInstance().start(cfg) != 0;
+    QString resolvedConfig = cfg;
+    if (!amnezia::managed::resolveXrayConfig(resolvedConfig)) {
+        qWarning() << "IpcServer::xrayStart rejected: server is not approved by the administrator";
+        return false;
+    }
+
+    return Xray::getInstance().start(resolvedConfig) != 0;
 }
 
 bool IpcServer::xrayStop()
@@ -320,6 +327,7 @@ bool IpcServer::xrayStop()
     qDebug() << "IpcServer::xrayStop";
 #endif
 
+    amnezia::managed::forgetApprovedXrayConfig();
     return Xray::getInstance().stopAny();
 }
 
@@ -329,7 +337,13 @@ qint64 IpcServer::xrayStartOwned(const QString& cfg)
     qDebug() << "IpcServer::xrayStartOwned";
 #endif
 
-    return Xray::getInstance().start(cfg);
+    QString resolvedConfig = cfg;
+    if (!amnezia::managed::resolveXrayConfig(resolvedConfig)) {
+        qWarning() << "IpcServer::xrayStartOwned rejected: server is not approved by the administrator";
+        return 0;
+    }
+
+    return Xray::getInstance().start(resolvedConfig);
 }
 
 bool IpcServer::xrayStopOwned(qint64 token)
@@ -337,6 +351,10 @@ bool IpcServer::xrayStopOwned(qint64 token)
 #ifdef MZ_DEBUG
     qDebug() << "IpcServer::xrayStopOwned";
 #endif
+
+    if (token == Xray::getInstance().currentToken()) {
+        amnezia::managed::forgetApprovedXrayConfig();
+    }
 
     return Xray::getInstance().stop(token);
 }

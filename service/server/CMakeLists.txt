@@ -21,6 +21,7 @@ configure_file(${CMAKE_SOURCE_DIR}/version.h.in ${CMAKE_CURRENT_BINARY_DIR}/vers
 set(HEADERS
     ${CMAKE_CURRENT_LIST_DIR}/../../client/core/utils/utilities.h
     ${CMAKE_CURRENT_LIST_DIR}/../../common/crypto/cryptoUtils.h
+    ${CMAKE_CURRENT_LIST_DIR}/../../common/managed/managedPolicy.h
     ${CMAKE_CURRENT_LIST_DIR}/../../client/secureQSettings.h
     ${CMAKE_CURRENT_LIST_DIR}/../../client/core/utils/networkUtilities.h
     ${CMAKE_CURRENT_LIST_DIR}/../../ipc/ipc.h
@@ -38,6 +39,7 @@ set(HEADERS
 set(SOURCES
     ${CMAKE_CURRENT_LIST_DIR}/../../client/core/utils/utilities.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../../common/crypto/cryptoUtils.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../../common/managed/managedPolicy.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../../client/secureQSettings.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../../client/core/utils/networkUtilities.cpp
     ${CMAKE_CURRENT_LIST_DIR}/../../ipc/ipcserver.cpp
@@ -283,6 +285,7 @@ include_directories(
     ${CMAKE_CURRENT_LIST_DIR}/../../ipc
     ${CMAKE_CURRENT_LIST_DIR}/../../common/logger
     ${CMAKE_CURRENT_LIST_DIR}/../../common/crypto
+    ${CMAKE_CURRENT_LIST_DIR}/../../common/managed
     ${CMAKE_CURRENT_BINARY_DIR}
 )
 

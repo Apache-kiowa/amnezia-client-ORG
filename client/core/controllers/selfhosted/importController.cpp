@@ -27,6 +27,7 @@
 #include "core/utils/constants/configKeys.h"
 #include "core/utils/constants/protocolConstants.h"
 #include "core/utils/qrCodeUtils.h"
+#include "managedPolicy.h"
 
 using namespace amnezia;
 using namespace ProtocolUtils;
@@ -405,6 +406,11 @@ int ImportController::qrChunksTotal() const
 
 void ImportController::importConfig(const QJsonObject &config)
 {
+    if (managed::isLocked()) {
+        emit importErrorOccurred(ErrorCode::ManagedModeAdminRequired, true);
+        return;
+    }
+
     if (!serverConfigUtils::isConfigFormatVersionSupported(config)) {
         emit importErrorOccurred(ErrorCode::ConfigFormatVersionNotSupportedError, false);
         return;

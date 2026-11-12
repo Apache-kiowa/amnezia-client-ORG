@@ -133,6 +133,7 @@ set(_client_include_dirs
     ${CMAKE_CURRENT_LIST_DIR}/../ipc
     ${CMAKE_CURRENT_LIST_DIR}/../common/logger
     ${CMAKE_CURRENT_LIST_DIR}/../common/crypto
+    ${CMAKE_CURRENT_LIST_DIR}/../common/managed
     ${CMAKE_CURRENT_LIST_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
 )

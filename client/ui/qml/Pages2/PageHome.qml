@@ -165,6 +165,8 @@ PageType {
                 Layout.alignment: Qt.AlignHCenter
                 Layout.maximumWidth: parent.width - 32
 
+                visible: !IsManagedLocked
+
                 property bool isSplitTunnelingEnabled: IpSplitTunnelingController.isSplitTunnelingEnabled || AppSplitTunnelingController.isSplitTunnelingEnabled ||
                                                        ServersUiController.isDefaultServerDefaultContainerHasSplitTunneling
 
@@ -330,7 +332,7 @@ PageType {
                     Layout.maximumWidth: parent.width - 32
                     Layout.topMargin: 16
 
-                    visible: !ServersUiController.isDefaultServerFromApi
+                    visible: !ServersUiController.isDefaultServerFromApi && !IsManagedLocked
 
                     text: ServersUiController.defaultServerDefaultContainerName
                     rightImageSource: "qrc:/images/controls/chevron-down.svg"

@@ -1,6 +1,7 @@
 #include "version.h"
 #include "localserver.h"
 #include "systemservice.h"
+#include "managedPolicy.h"
 
 
 #ifdef Q_OS_WIN
@@ -40,6 +41,7 @@ SystemService::SystemService(int argc, char **argv)
 void SystemService::start()
 {
     QCoreApplication* app = application();
+    amnezia::managed::refreshPublicServersList();
     m_localServer  = new LocalServer();
 }
 
